@@ -12,6 +12,7 @@ from playhouse.shortcuts import model_to_dict
 #second argument is the import_name
 stats = Blueprint('stats', 'stats')
 
+#index
 @stats.route('/', methods=['GET'])
 def index():
     result = models.Score.select()
@@ -29,13 +30,14 @@ def index():
         status=200
     ),200
 
+#create route
 @stats.route('/', methods=['POST'])
 def create_score():
     # .get_json() attached to the request will extract JSON from the request body. (like req.body)
     payload = request.get_json()
     print(payload) #shows the request
 
-    new_score = models.Score.create(date=payload['date'], location=payload['location'], hole=payload['hole'], score=payload['score'], putts=payload['putts'])
+    new_score = models.Score.create(**payload)
     #^ this creates a new model with our schema
 
     score_dict = model_to_dict(new_score)
@@ -46,3 +48,44 @@ def create_score():
         message='Successfully created score',
         status=201
     ), 201
+
+#show route
+@stats.route('/<id>', methods=['GET'])
+def get_score(id):
+    score = models.Score.get_by_id(id)
+    print(score)
+
+    return jsonify(
+        data= model_to_dict(score),
+        message="Success",
+        status=200
+    ), 200
+
+#update route
+@stats.route('/<id>', methods=['PUT'])
+def update_score(id):
+    payload = request.get_json() #grabs request
+    
+    update_query = models.Score.update(**payload).where(models.Score.id == id).execute()
+
+
+    return jsonify(
+        data= model_to_dict(models.Score.get_by_id(id)),
+        message= "Updated Successfully",
+        status= 200
+    ), 200
+
+#delete route
+@stats.route('/<id>', methods=['DELETE'])
+def delete_score(id):
+    delete_query = models.Score.delete().where(models.Score.id == id)
+    rows_deleted = delete_query.execute()
+    print(rows_deleted)
+    #if no rows were deleted return 0
+
+    return jsonify(
+        data={},
+        message="Successfully deleted score",
+        status=200
+    ),200
+
