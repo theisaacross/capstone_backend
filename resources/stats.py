@@ -37,7 +37,7 @@ def index():
 
 #create route
 @stats.route('/', methods=['POST'])
-# @login_required
+@login_required
 def create_score():
     # .get_json() attached to the request will extract JSON from the request body. (like req.body)
     payload = request.get_json()
