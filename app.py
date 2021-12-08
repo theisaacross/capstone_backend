@@ -28,7 +28,6 @@ app = Flask(__name__) #like const app = express()
 
 #1. set up secret/key for sessions
 app.secret_key = os.environ.get("FLASK_APP_SECRET")
-print(os.environ.get("FLASK_APP_SECRET"))
 #2. instantiate the Login Manager 
 login_manager = LoginManager()
 #3. connect the app with the login_manager
