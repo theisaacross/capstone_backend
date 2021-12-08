@@ -14,7 +14,10 @@ from flask_cors import CORS
 
 #we need to import and configure the LoginManager
 from flask_login import LoginManager, login_manager
+
 import os # this lets get app secret
+from dotenv import load_dotenv
+load_dotenv() #takes the environment variables from .env
 
 DEBUG=True
 
@@ -24,7 +27,7 @@ app = Flask(__name__) #like const app = express()
 
 
 #1. set up secret/key for sessions
-app.secret_key = "QFG983QHIWAFK0Q1T92341NU123RQIUWHORQQWERQAKNSAOSDF"
+app.secret_key = os.environ.get("FLASK_APP_SECRET")
 #2. instantiate the Login Manager 
 login_manager = LoginManager()
 #3. connect the app with the login_manager
@@ -39,7 +42,13 @@ def load_user(user_id):
     except models.DoesNotExist:
         return None
 
-
+@login_manager.unauthorized_handler
+def unauthorized():
+    return jsonify(
+        data={'error': 'User not logged in'},
+        message= "You must be logged in to use that feature.",
+        status=401
+    ), 401 
 
 #whitelisting
 CORS(stats, origin=['http://localhost:3000'], supports_credentials=True) #support allows cookies and sessions for auth
