@@ -1,19 +1,20 @@
+from werkzeug.datastructures import is_immutable
 import models
 
 from flask import Blueprint, request, jsonify
 
 from flask_bcrypt import generate_password_hash, check_password_hash #hashes our passwords for us 
 
-from flask_login import login_user, current_user #this will be used for sessions
+from flask_login import login_user, current_user, logout_user #this will be used for sessions
 
 from playhouse.shortcuts import model_to_dict
 
 users = Blueprint('users', 'users')
 
 
-@users.route('/', methods=['GET'])
-def users_index():
-    return "hit users route"
+# @users.route('/', methods=['GET'])
+# def users_index():
+#     return "hit users route"
 
 @users.route('/register', methods=['POST'])
 def register():
@@ -55,7 +56,7 @@ def register():
 
     return jsonify(
         data=created_user_dict,
-        message="Successfully registerd user",
+        message="Successfully registered user",
         status=201
     ),201
 
@@ -74,18 +75,19 @@ def login():
         if (password_correct):
             login_user(user)
             user_dict.pop('password')
+            # print(current_user.username)
 
             return jsonify(
                 data=user_dict,
                 message=f"Successfully logged in {user_dict['username']}",
                 status=200
             ), 200
-        else:
-            return jsonify(
-                data={},
-                message="Username or Password is incorrect",
-                status=401
-            ), 401
+        # else:
+        #     return jsonify(
+        #         data={},
+        #         message="Username or Password is incorrect",
+        #         status=401
+        #     ), 401
         
 
     except models.DoesNotExist:
@@ -95,13 +97,41 @@ def login():
             status=401
         ),401
 
+@users.route('/logout', methods=['GET'])
+def logout():
+    logout_user()
+
+    return jsonify(
+        data={},
+        message="Successfully logged out",
+        status=200,
+    ),200
+
+
+
+
+
+
+
+
 #test route to show who is logged in 
 @users.route('/logged_in_user', methods=['GET'])
 def get_logged_in_user():
-    #we can access current_user because we called login_user and set up user_loader
-    print(current_user)
-    user_dict = model_to_dict(current_user)
-    user_dict.pop('password')
-    #you now have access to the currently logged in user
 
-    return jsonify(data=user_dict), 200
+    if not current_user.is_authenticated:
+        return jsonify(
+            data={},
+            message="No user is currently logged in",
+            status=401
+        ), 401
+    else:
+            #we can access current_user because we called login_user and set up user_loader
+        print(current_user)
+        user_dict = model_to_dict(current_user)
+        user_dict.pop('password')
+        #you now have access to the currently logged in user
+        return jsonify(
+            data=user_dict,
+            message=f"Currently logged in as {user_dict['username']}",
+            status=200
+        ), 200

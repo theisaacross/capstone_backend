@@ -16,21 +16,22 @@ stats = Blueprint('stats', 'stats')
 
 #index
 @stats.route('/', methods=['GET'])
-# @login_required
+@login_required
 def index():
     result = models.Score.select()
     print(result) #looks like SQL
 
     #use a loop to populate all models to dictionaries
-    score_dicts = []
-    for score in result:
-        score_dict = model_to_dict(score)
+    # score_dicts = [model_to_dict(score) for score in result]
+    current_user_score_dicts = [model_to_dict(score) for score in current_user.stats]
+
+
+    for score_dict in current_user_score_dicts:
         score_dict['user'].pop('password')
-        score_dicts.append(score_dict)
         
     return jsonify(
-        data=score_dicts,
-        message=f"Successfully found {len(score_dicts)} scores",
+        data=current_user_score_dicts,
+        message=f"Successfully found {len(current_user_score_dicts)} scores",
         status=200
     ),200
 
@@ -58,20 +59,22 @@ def create_score():
 
 #show route
 @stats.route('/<id>', methods=['GET'])
-# @login_required
+@login_required
 def get_score(id):
     score = models.Score.get_by_id(id)
     print(score)
+    current_score= model_to_dict(score)
+    current_score['user'].pop('password')
 
     return jsonify(
-        data= model_to_dict(score),
+        data= current_score,
         message="Success",
         status=200
     ), 200
 
 #update route
 @stats.route('/<id>', methods=['PUT'])
-# @login_required
+@login_required
 def update_score(id):
     payload = request.get_json() #grabs request
     
@@ -86,7 +89,7 @@ def update_score(id):
 
 #delete route
 @stats.route('/<id>', methods=['DELETE'])
-# @login_required
+@login_required
 def delete_score(id):
     delete_query = models.Score.delete().where(models.Score.id == id)
     rows_deleted = delete_query.execute()
