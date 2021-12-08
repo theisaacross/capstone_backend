@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 
 from flask_bcrypt import generate_password_hash, check_password_hash #hashes our passwords for us 
 
-from flask_login import login_user #this will be used for sessions
+from flask_login import login_user, current_user #this will be used for sessions
 
 from playhouse.shortcuts import model_to_dict
 
@@ -94,3 +94,14 @@ def login():
             message="Username or password is incorrect",
             status=401
         ),401
+
+#test route to show who is logged in 
+@users.route('/logged_in_user', methods=['GET'])
+def get_logged_in_user():
+    #we can access current_user because we called login_user and set up user_loader
+    print(current_user)
+    user_dict = model_to_dict(current_user)
+    user_dict.pop('password')
+    #you now have access to the currently logged in user
+
+    return jsonify(data=user_dict), 200

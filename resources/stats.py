@@ -5,7 +5,7 @@ import models
 
 from flask import Blueprint, request, jsonify #request is basically req.body
 
-from flask_login import login_required
+from flask_login import login_required , current_user
 
 # useful tools from peewee
 from playhouse.shortcuts import model_to_dict
@@ -25,6 +25,7 @@ def index():
     score_dicts = []
     for score in result:
         score_dict = model_to_dict(score)
+        score_dict['user'].pop('password')
         score_dicts.append(score_dict)
         
     return jsonify(
@@ -41,11 +42,13 @@ def create_score():
     payload = request.get_json()
     print(payload) #shows the request
 
-    new_score = models.Score.create(**payload)
+    new_score = models.Score.create(user=current_user.id, date=payload['date'], location=payload['location'], hole=payload['hole'], score=payload['score'], putts=payload['putts'])
     #^ this creates a new model with our schema
 
     score_dict = model_to_dict(new_score)
     #^ converts model to dictionary
+
+    score_dict['user'].pop('password')
 
     return jsonify(
         data=score_dict,

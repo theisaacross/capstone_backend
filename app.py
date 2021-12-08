@@ -29,6 +29,16 @@ app.secret_key = "QFG983QHIWAFK0Q1T92341NU123RQIUWHORQQWERQAKNSAOSDF"
 login_manager = LoginManager()
 #3. connect the app with the login_manager
 login_manager.init_app(app)
+#4. load current_user from the user id store in the session, shows the user object and all the score it has stored
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return models.User.get(user_id)
+        #it should return None, it will not raise an execption
+    except models.DoesNotExist:
+        return None
+
+
 
 #whitelisting
 CORS(stats, origin=['http://localhost:3000'], supports_credentials=True) #support allows cookies and sessions for auth
