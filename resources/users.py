@@ -82,12 +82,12 @@ def login():
                 message=f"Successfully logged in {user_dict['username']}",
                 status=200
             ), 200
-        # else:
-        #     return jsonify(
-        #         data={},
-        #         message="Username or Password is incorrect",
-        #         status=401
-        #     ), 401
+        else:
+            return jsonify(
+                data={},
+                message="Username or Password is incorrect",
+                status=401
+            ), 401
         
 
     except models.DoesNotExist:
