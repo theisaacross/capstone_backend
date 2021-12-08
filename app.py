@@ -3,6 +3,8 @@ from flask import Flask, jsonify
 #
 from resources.stats import stats
 
+from resources.users import users
+
 #this statement will import all variables and methods/functions from a file as properties on the model object
 import models
 
@@ -10,17 +12,31 @@ import models
 from flask_cors import CORS
 #^^ our origin is 8000 and react's origin is 3000 so we need to whitelist 3000 so our frontend can make requests
 
+#we need to import and configure the LoginManager
+from flask_login import LoginManager, login_manager
+import os # this lets get app secret
+
 DEBUG=True
 
 PORT=8000
 
 app = Flask(__name__) #like const app = express()
 
+
+#1. set up secret/key for sessions
+app.secret_key = "QFG983QHIWAFK0Q1T92341NU123RQIUWHORQQWERQAKNSAOSDF"
+#2. instantiate the Login Manager 
+login_manager = LoginManager()
+#3. connect the app with the login_manager
+login_manager.init_app(app)
+
 #whitelisting
 CORS(stats, origin=['http://localhost:3000'], supports_credentials=True) #support allows cookies and sessions for auth
+CORS(users, origin=['http://localhost:3000'], supports_credentials=True)
 
 #use this blueprint( component/controller of the app) to handle anything related to stats
-app.register_blueprint(stats, url_prefix='/api/v1/stats')
+app.register_blueprint(stats, url_prefix='/stats')
+app.register_blueprint(users, url_prefix='/users')
 
 # routes
 @app.route('/test')
