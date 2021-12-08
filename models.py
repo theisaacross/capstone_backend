@@ -5,10 +5,20 @@ from flask_login import UserMixin
 
 DATABASE = SqliteDatabase('stats.sqlite') # creates stats database
 
+# our user class inherits certain methods and properites from UserMixin
+class User(UserMixin, Model):
+    username= CharField(unique=True)
+    password = CharField()
+
+    class Meta: #connects us to the db
+        database = DATABASE
+
 # defining our model
 
 class Score(Model):
-    # add in userId or username
+    # to set up our one to many relationship we need a foreign key
+    user = ForeignKeyField(User, backref="stats")
+    #this connects score and stats
     date = DateField()
     location = CharField()
     hole = IntegerField()
@@ -18,13 +28,6 @@ class Score(Model):
     class Meta: #connects us to the db
         database = DATABASE
 
-# our user class inherits certain methods and properites from UserMixin
-class User(UserMixin, Model):
-    username= CharField(unique=True)
-    password = CharField()
-
-    class Meta: #connects us to the db
-        database = DATABASE
 
 
 #define a method that will get called when app is started
