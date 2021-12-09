@@ -12,9 +12,9 @@ from playhouse.shortcuts import model_to_dict
 users = Blueprint('users', 'users')
 
 
-# @users.route('/', methods=['GET'])
-# def users_index():
-#     return "hit users route"
+@users.route('/', methods=['GET'])
+def users_index():
+    return "hit users route"
 
 @users.route('/register', methods=['POST'])
 def register():
