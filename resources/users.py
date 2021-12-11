@@ -1,4 +1,5 @@
 from werkzeug.datastructures import is_immutable
+from werkzeug.wrappers import response
 import models
 
 from flask import Blueprint, request, jsonify
@@ -51,6 +52,8 @@ def register():
         created_user_dict.pop('password')
         #respond with new user
 
+        print(current_user.username + "you are registerd")
+
         
 
 
@@ -75,7 +78,7 @@ def login():
         if (password_correct):
             login_user(user)
             user_dict.pop('password')
-            # print(current_user.username)
+            print(current_user.username + "you are logged in")
 
             return jsonify(
                 data=user_dict,
@@ -106,12 +109,6 @@ def logout():
         message="Successfully logged out",
         status=200,
     ),200
-
-
-
-
-
-
 
 
 #test route to show who is logged in 

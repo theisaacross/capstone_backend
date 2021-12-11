@@ -58,10 +58,7 @@ CORS(users, origin=['http://localhost:3000'], supports_credentials=True)
 app.register_blueprint(stats, url_prefix='/stats')
 app.register_blueprint(users, url_prefix='/users')
 
-# routes
-@app.route('/test')
-def test():
-    return jsonify(['hello', 'hi'])
+
 
 
 
