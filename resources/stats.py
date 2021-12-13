@@ -16,7 +16,7 @@ stats = Blueprint('stats', 'stats')
 
 #index
 @stats.route('/', methods=['GET'])
-@login_required
+# @login_required
 def index():
     result = models.Score.select()
     print(result) #looks like SQL
@@ -43,7 +43,7 @@ def create_score():
     payload = request.get_json()
     print(payload) #shows the request
 
-    new_score = models.Score.create(user=current_user.username, date=payload['date'], location=payload['location'], hole=payload['hole'], score=payload['score'], putts=payload['putts'])
+    new_score = models.Score.create(user=current_user.id, date=payload['date'], location=payload['location'], hole=payload['hole'], score=payload['score'], putts=payload['putts'])
     #^ this creates a new model with our schema
 
     score_dict = model_to_dict(new_score)

@@ -54,9 +54,6 @@ def register():
 
         print(current_user.username + "you are registerd")
 
-        
-
-
     return jsonify(
         data=created_user_dict,
         message="Successfully registered user",
