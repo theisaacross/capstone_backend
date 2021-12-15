@@ -78,9 +78,9 @@ def get_score(id):
 def update_score(id):
     payload = request.get_json() #grabs request
     
-    update_query = models.Score.update(**payload).where(models.Score.id == id).execute()
+    update_query = models.Score.update(date=payload['date'], location=payload['location'], hole=payload['hole'], score=payload['score'], putts=payload['putts']).where(models.Score.id == id).execute()
 
-
+    print(payload)
     return jsonify(
         data= model_to_dict(models.Score.get_by_id(id)),
         message= "Updated Successfully",
