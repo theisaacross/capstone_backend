@@ -19,7 +19,7 @@ class Score(Model):
     # to set up our one to many relationship we need a foreign key
     user = ForeignKeyField(User, backref="stats")
     #this connects score and stats
-    date = DateField()
+    date = DateTimeField()
     location = CharField()
     hole = IntegerField()
     score = IntegerField()
