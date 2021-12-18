@@ -1,9 +1,15 @@
+import os
 from peewee import *
+from playhouse.db_url import connect
 
 #flask_login to set up our user model, sessions, logins and authentication
 from flask_login import UserMixin
 
-DATABASE = SqliteDatabase('stats.sqlite') # creates stats database
+
+if 'ON_HEROKU' in os.environ:
+    DATABASE = connect(os.environ.get('DATABASE_URL'))
+else:
+    DATABASE = SqliteDatabase('stats.sqlite') # creates stats database
 
 # our user class inherits certain methods and properites from UserMixin
 class User(UserMixin, Model):
